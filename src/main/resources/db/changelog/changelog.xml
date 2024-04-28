@@ -5,5 +5,8 @@
                         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.8.xsd">
 
 
+    <changeSet  author="priyanshu" id="1">
+        <sqlFile path="db/changelog/changes/MobileOtpTableCreation.sql" />
+    </changeSet>
 
 </databaseChangeLog>
