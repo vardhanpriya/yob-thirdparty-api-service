@@ -30,7 +30,7 @@ public class AadharOtpController {
 
     @PostMapping("/validate")
 
-    public ResponseEntity<ValidateAadharOtpResponse> validateAadharOtp0(@RequestBody ValidateAadharOtpRequest request){
+    public ResponseEntity<ValidateAadharOtpResponse> validateAadharOtp(@RequestBody ValidateAadharOtpRequest request){
 
         ValidateAadharOtpResponse res = aadharOtpService.validateAadharOtp(request);
         return new ResponseEntity<>(res,HttpStatus.OK);
