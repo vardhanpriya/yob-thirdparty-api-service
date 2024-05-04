@@ -9,4 +9,10 @@
         <sqlFile path="db/changelog/changes/MobileOtpTableCreation.sql" />
     </changeSet>
 
+
+    <changeSet  author="priya" id="2">
+        <sqlFile path="db/changelog/changes/AadharOtpTableCreation.sql" />
+    </changeSet>
+
+
 </databaseChangeLog>
