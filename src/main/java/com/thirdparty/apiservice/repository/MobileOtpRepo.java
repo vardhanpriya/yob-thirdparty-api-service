@@ -8,5 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MobileOtpRepo extends JpaRepository<MobileOtpEntity,Integer> {
 
+    MobileOtpEntity findByTransactionId(String transactionId);
 
 }

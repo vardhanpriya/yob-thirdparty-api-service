@@ -2,6 +2,8 @@ package com.thirdparty.apiservice.controller;
 
 import com.thirdparty.apiservice.dto.GenerateMobileOtpRequest;
 import com.thirdparty.apiservice.dto.GenerateMobileOtpResponse;
+import com.thirdparty.apiservice.dto.ValidateMobileOtpRequest;
+import com.thirdparty.apiservice.dto.ValidateMobileOtpResponse;
 import com.thirdparty.apiservice.service.MobileOtpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,5 +29,11 @@ public class MobileOtpController {
         return new ResponseEntity<>(res, HttpStatus.OK);
 
 
+    }
+    @PostMapping("/validate")
+    public ResponseEntity<ValidateMobileOtpResponse> validateMobileOtp(@RequestBody ValidateMobileOtpRequest request){
+
+        ValidateMobileOtpResponse res = mobileOtpService.validateMobileOtp(request);
+        return new ResponseEntity<>(res,HttpStatus.OK);
     }
 }
