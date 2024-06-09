@@ -120,6 +120,7 @@ public class AadharOtpServiceImpl implements AadharOtpService {
             metaData.setVersion("V1");
             metaData.setCode("IN-REQ");
             metaData.setTime(LocalDateTime.now().toString());
+            res.setMetadata(metaData);
             resourceData.setCode("IN_REQ");
             resourceDataList.add(resourceData);
             res.setResource_data(resourceDataList);
