@@ -69,10 +69,6 @@ public class AadharOtpServiceImpl implements AadharOtpService {
         Gson gson = new Gson();
         AadharOtpEntity entity = aadharOtpRepo.findByTransactionId(request.getValidateAadharOtpReq().getTransactionId());
         ValidateAadharOtpResponse response = new ValidateAadharOtpResponse();
-        ValidateAadharOtpResponse.ValidateAadharOtpRes res = new ValidateAadharOtpResponse.ValidateAadharOtpRes();
-        ValidateAadharOtpResponse.ValidataAadharOtpMetaData metaData = new ValidateAadharOtpResponse.ValidataAadharOtpMetaData();
-        List <ValidateAadharOtpResponse.ValidataAadharOtpResourceData > resourceDataList = new ArrayList<>();
-        ValidateAadharOtpResponse.ValidataAadharOtpResourceData resourceData = new ValidateAadharOtpResponse.ValidataAadharOtpResourceData();
         // difference btwn == ,.equals(),.equalIgnoreCase()
         if(entity!= null){
 
@@ -85,47 +81,37 @@ public class AadharOtpServiceImpl implements AadharOtpService {
                   response   = gson.fromJson(aadharRes,ValidateAadharOtpResponse.class);
                   return response;
               }else {
-                  metaData.setStatus("ERROR");
-                  metaData.setMessage("No data added in the database for this customer.. ");
-                  metaData.setVersion("V1");
-                  metaData.setTime(LocalDateTime.now().toString());
-                  metaData.setCode("DATA-NOT-FOUND");
-                  resourceData.setCode("DATA-NOT-FOUND");
-                  res.setMetadata(metaData);
-                  resourceDataList.add(resourceData);
-                  res.setResource_data(resourceDataList);
-                  response.setVerifyAadhaarResp(res);
-                  return response;
+
+                  return getErrorResponse("No data added in the database for this customer.. ","DATA-NOT-FOUND","DATA-NOT-FOUND");
               }
 
             }
             else {
-                metaData.setStatus("ERROR");
-                metaData.setMessage("Resident authentication failed (usually wrong otp) ");
-                metaData.setVersion("V1");
-                metaData.setCode("k-100");
-                metaData.setTime(LocalDateTime.now().toString());
-                resourceData.setCode("403");
-                res.setMetadata(metaData);
-                resourceDataList.add(resourceData);
-                res.setResource_data(resourceDataList);
-                response.setVerifyAadhaarResp(res);
-                return response;
+
+                return getErrorResponse("Resident authentication failed (usually wrong otp) ","k-100","403");
 
             }
         }
         else {
-            metaData.setStatus("ERROR");
-            metaData.setMessage("Data can't be processed or Ivalid Request");
-            metaData.setVersion("V1");
-            metaData.setCode("IN-REQ");
-            metaData.setTime(LocalDateTime.now().toString());
-            res.setMetadata(metaData);
-            resourceData.setCode("IN_REQ");
-            resourceDataList.add(resourceData);
-            res.setResource_data(resourceDataList);
-            response.setVerifyAadhaarResp(res);
-            return response;
+            return getErrorResponse("Data can't be processed or Ivalid Request","IN-REQ","IN_REQ");
         }
+    }
+    private ValidateAadharOtpResponse getErrorResponse(String message, String metadaCd, String resDataCd){
+        ValidateAadharOtpResponse response = new ValidateAadharOtpResponse();
+        ValidateAadharOtpResponse.ValidateAadharOtpRes res = new ValidateAadharOtpResponse.ValidateAadharOtpRes();
+        ValidateAadharOtpResponse.ValidataAadharOtpMetaData metaData = new ValidateAadharOtpResponse.ValidataAadharOtpMetaData();
+        List <ValidateAadharOtpResponse.ValidataAadharOtpResourceData > resourceDataList = new ArrayList<>();
+        ValidateAadharOtpResponse.ValidataAadharOtpResourceData resourceData = new ValidateAadharOtpResponse.ValidataAadharOtpResourceData();
+        metaData.setStatus("ERROR");
+        metaData.setMessage(message);
+        metaData.setVersion("V1");
+        metaData.setCode(metadaCd);
+        metaData.setTime(LocalDateTime.now().toString());
+        res.setMetadata(metaData);
+        resourceData.setCode(resDataCd);
+        resourceDataList.add(resourceData);
+        res.setResource_data(resourceDataList);
+        response.setVerifyAadhaarResp(res);
+        return response;
     }
 }
