@@ -1,10 +1,14 @@
 package com.thirdparty.apiservice.service.impl;
 
+import com.google.gson.Gson;
 import com.thirdparty.apiservice.dto.GenerateAadharOtpResponse;
 import com.thirdparty.apiservice.dto.ValidateAadharOtpRequest;
 import com.thirdparty.apiservice.dto.ValidateAadharOtpResponse;
 import com.thirdparty.apiservice.entity.AadharOtpEntity;
+import com.thirdparty.apiservice.entity.StubDetails;
+import com.thirdparty.apiservice.helper.EncryptionDecryption;
 import com.thirdparty.apiservice.repository.AadharOtpRepo;
+import com.thirdparty.apiservice.repository.StubDetailsRepo;
 import com.thirdparty.apiservice.service.AadharOtpService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +17,20 @@ import static com.thirdparty.apiservice.dto.GenerateAadharOtpResponse.GenAadharO
 import static com.thirdparty.apiservice.dto.GenerateAadharOtpResponse.GenAadharOtpResourceData;
 import static com.thirdparty.apiservice.dto.GenerateAadharOtpResponse.GenerateAadharOtpRes;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 @Service
 public class AadharOtpServiceImpl implements AadharOtpService {
     @Autowired
      private AadharOtpRepo aadharOtpRepo;
+
+    @Autowired
+    private StubDetailsRepo stubDetailsRepo;
+
+    @Autowired
+    private EncryptionDecryption encDecHelper;
 
     @Override
     public GenerateAadharOtpResponse generateAadharotp(String aadhar) {
@@ -54,26 +66,65 @@ public class AadharOtpServiceImpl implements AadharOtpService {
 
     @Override
     public ValidateAadharOtpResponse validateAadharOtp(ValidateAadharOtpRequest request) {
+        Gson gson = new Gson();
         AadharOtpEntity entity = aadharOtpRepo.findByTransactionId(request.getValidateAadharOtpReq().getTransactionId());
-
+        ValidateAadharOtpResponse response = new ValidateAadharOtpResponse();
+        ValidateAadharOtpResponse.ValidateAadharOtpRes res = new ValidateAadharOtpResponse.ValidateAadharOtpRes();
+        ValidateAadharOtpResponse.ValidataAadharOtpMetaData metaData = new ValidateAadharOtpResponse.ValidataAadharOtpMetaData();
+        List <ValidateAadharOtpResponse.ValidataAadharOtpResourceData > resourceDataList = new ArrayList<>();
+        ValidateAadharOtpResponse.ValidataAadharOtpResourceData resourceData = new ValidateAadharOtpResponse.ValidataAadharOtpResourceData();
         // difference btwn == ,.equals(),.equalIgnoreCase()
         if(entity!= null){
 
             if(request.getValidateAadharOtpReq().getAadharOtp().equals(entity.getOtp())&&
                     request.getValidateAadharOtpReq().getAadharNo().equals(entity.getAadharNo())){
-                System.out.println("otp is correct");
+
+              StubDetails stubDetails = stubDetailsRepo.findByStubUrlAndUniqueIdVal("/get/aadhar/details",encDecHelper.encryptAadharData(request.getValidateAadharOtpReq().getAadharNo()));
+              if(stubDetails!=null){
+                  String aadharRes  = stubDetails.getResponse();
+                  response   = gson.fromJson(aadharRes,ValidateAadharOtpResponse.class);
+                  return response;
+              }else {
+                  metaData.setStatus("ERROR");
+                  metaData.setMessage("No data added in the database for this customer.. ");
+                  metaData.setVersion("V1");
+                  metaData.setTime(LocalDateTime.now().toString());
+                  metaData.setCode("DATA-NOT-FOUND");
+                  resourceData.setCode("DATA-NOT-FOUND");
+                  res.setMetadata(metaData);
+                  resourceDataList.add(resourceData);
+                  res.setResource_data(resourceDataList);
+                  response.setVerifyAadhaarResp(res);
+                  return response;
+              }
 
             }
             else {
+                metaData.setStatus("ERROR");
+                metaData.setMessage("Resident authentication failed (usually wrong otp) ");
+                metaData.setVersion("V1");
+                metaData.setCode("k-100");
+                metaData.setTime(LocalDateTime.now().toString());
+                resourceData.setCode("403");
+                res.setMetadata(metaData);
+                resourceDataList.add(resourceData);
+                res.setResource_data(resourceDataList);
+                response.setVerifyAadhaarResp(res);
+                return response;
 
-                System.out.println("otp is incorrect");
             }
         }
         else {
-            System.out.println("nothing in db");
+            metaData.setStatus("ERROR");
+            metaData.setMessage("Data can't be processed or Ivalid Request");
+            metaData.setVersion("V1");
+            metaData.setCode("IN-REQ");
+            metaData.setTime(LocalDateTime.now().toString());
+            resourceData.setCode("IN_REQ");
+            resourceDataList.add(resourceData);
+            res.setResource_data(resourceDataList);
+            response.setVerifyAadhaarResp(res);
+            return response;
         }
-
-
-        return new ValidateAadharOtpResponse();
     }
 }

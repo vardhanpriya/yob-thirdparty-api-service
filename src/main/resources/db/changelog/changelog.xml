@@ -14,5 +14,9 @@
         <sqlFile path="db/changelog/changes/AadharOtpTableCreation.sql" />
     </changeSet>
 
+    <changeSet  author="priya" id="4">
+        <sqlFile path="db/changelog/changes/StubDetails.sql" />
+    </changeSet>
+
 
 </databaseChangeLog>

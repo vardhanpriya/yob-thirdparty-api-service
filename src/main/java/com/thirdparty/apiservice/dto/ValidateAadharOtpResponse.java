@@ -1,55 +1,54 @@
 package com.thirdparty.apiservice.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class ValidateAadharOtpResponse {
 
-    private ValidateAadharOtpRes validateAadharOtpRes;
+    private ValidateAadharOtpRes verifyAadhaarResp;
+
     @Data
-    public  static  class ValidateAadharOtpRes{
+    public static class ValidateAadharOtpRes {
 
-        private  ValidataAadharOtpMetaData metadata;
+        private ValidataAadharOtpMetaData metadata;
 
-        private ValidataAadharOtpResourceData resourceData;
+        private List<ValidataAadharOtpResourceData> resource_data;
     }
 
     @Data
-     public static class ValidataAadharOtpMetaData{
+    public static class ValidataAadharOtpMetaData {
 
-         private String status;
-
-         private String message;
-
-         private String version;
-
-         private String code;
-
-         private String time;
-
-
-
-     }
-      @Data
-     public static class ValidataAadharOtpResourceData{
+        private String status;
 
         private String message;
 
-        private String statusCode;
+        private String version;
 
-        private String errorCode;
+        private String code;
 
-        private CustomerData customerData;
+        private String time;
 
-     }
-     @Data
-     public static class CustomerData{
 
+    }
+
+    @Data
+    public static class ValidataAadharOtpResourceData {
+
+        private String status;
+
+        private String code;
+
+        private String transaction;
+
+
+        private String aadharNumber;
 
         private String aadharName;
 
-        private String aadharNo;
-
         private String aadharData;
-     }
+
+    }
 }

@@ -11,4 +11,7 @@ public class PropertyConfig {
 
     @Value("${EXIPIRY_TIME_MOBILE_OTP}")
     private long mobileOtpExpTime;
+
+    @Value("${ENCRYPTION_DECRYPTION_KEY}")
+    private String encryptionDecryptionKey;
 }
