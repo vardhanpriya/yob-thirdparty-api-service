@@ -1,10 +1,21 @@
 package com.thirdparty.apiservice.client.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 @Data
 public class AadharMobileLinkageInfoResponse {
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Integer code;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String reason;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String service;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String details;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private EkycAuthenticationResp ekycAuthenticationResp;
 
     @Data
@@ -23,6 +34,17 @@ public class AadharMobileLinkageInfoResponse {
     public static class AadharMobileLinkageResource_data {
         private String code;
         private String status;
+    }
+
+    public static AadharMobileLinkageInfoResponse buildAadharMobileErrorResponse(Integer code,String reason,String service,String details){
+        AadharMobileLinkageInfoResponse errorResponse=new AadharMobileLinkageInfoResponse();
+        errorResponse.setCode(code);
+        errorResponse.setReason(reason);
+        errorResponse.setService(service);
+        errorResponse.setDetails(details);
+        return errorResponse;
+
+
     }
     public static AadharMobileLinkageInfoResponse buildAadharMobileLinkageInfoResponse(
             String metaStatus,String metaMsg,String metaCode,String rescd,String resSts) {
