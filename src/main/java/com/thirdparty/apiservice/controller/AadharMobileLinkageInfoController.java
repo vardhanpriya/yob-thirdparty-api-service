@@ -32,6 +32,23 @@ public class AadharMobileLinkageInfoController {
     @PostMapping(path = "/fetch/aadhar-mobile/linkage")
     public ResponseEntity<AadharMobileLinkageInfoResponse> fetchAadharMobileLinkage(@RequestBody  AadharMbileLinkageInfoRequest req) {
        // boolean isValid =RequestValidation.validateAadharMobileLinkageRequest(req);
+//        String value = "A";
+//        AadharMobileLinkageInfoResponse response=null;
+//
+//        switch (value){
+//            case  "A" :
+//                response=AadharMobileLinkageInfoResponse.buildAadharMobileErrorResponse();
+//                break;
+//            case "B" :
+//                response=AadharMobileLinkageInfoResponse.buildAadharMobileErrorResponse();
+//                break;
+//            case "C" :
+//                 response=AadharMobileLinkageInfoResponse.buildAadharMobileErrorResponse();
+//                 break;
+//        }
+//        if (response!=null){
+//            return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+//        }
         if(RequestValidation.validateAadharMobileLinkageRequest(req)){
             return new ResponseEntity<>(AadharMobileLinkageInfoResponse.buildAadharMobileErrorResponse(
                     400,"Bad Request","AadharMobileLinkage","Please provide request as per contract"),HttpStatus.BAD_REQUEST);
@@ -41,7 +58,5 @@ public class AadharMobileLinkageInfoController {
 
         }
     }
-
-
 
 }

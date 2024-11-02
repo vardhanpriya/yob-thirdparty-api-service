@@ -1,9 +1,11 @@
 package com.thirdparty.apiservice.controller;
 
 import com.thirdparty.apiservice.client.request.PanAadharLinkageInfoRequest;
+import com.thirdparty.apiservice.client.response.AadharMobileLinkageInfoResponse;
 import com.thirdparty.apiservice.client.response.PanAadharLinkageInfoResponse;
 import com.thirdparty.apiservice.dto.CommonResponse;
 import com.thirdparty.apiservice.dto.PanAadharLinkSaveReq;
+import com.thirdparty.apiservice.helper.RequestValidation;
 import com.thirdparty.apiservice.service.PanAadharLinkageInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,9 +32,14 @@ public class PanAadharLinkageInfoController {
                    401,"Unautorized access","Karza","Not allowed to Access API");
            return new ResponseEntity<>(res,HttpStatus.OK);
        }
+       if(RequestValidation.validatePanAadharLinkageReq(req)){
+           return new ResponseEntity<>(PanAadharLinkageInfoResponse.buildPanAadharErrorResponse(
+                   400,"Bad Request","AadharPanLinkage","Please provide request as per contract"),HttpStatus.BAD_REQUEST);
+       }else {
+           PanAadharLinkageInfoResponse   resp = panAadharLinkageInfoService.fetchPanAadharLinkageDetail(req.getPanNo(), req.getAadharNo());
+           return new ResponseEntity<>(resp, HttpStatus.OK);
+       }
 
-        PanAadharLinkageInfoResponse   resp = panAadharLinkageInfoService.fetchPanAadharLinkageDetail(req.getPanNo(), req.getAadharNo());
-        return new ResponseEntity<>(resp, HttpStatus.OK);
     }
 
 
