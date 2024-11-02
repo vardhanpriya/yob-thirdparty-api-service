@@ -13,6 +13,6 @@ public class GenerateAadharOtpRequest {
       private String aadharNo;
 
 
-  }
+    }
 
 }

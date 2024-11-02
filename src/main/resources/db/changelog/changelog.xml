@@ -19,4 +19,13 @@
     </changeSet>
 
 
+    <changeSet  author="priya" id="5">
+        <sqlFile path="db/changelog/changes/panaadharlinkageinfo.sql" />
+    </changeSet>
+
+    <changeSet  author="priya" id="6">
+        <sqlFile path="db/changelog/changes/AadharMobileLinkageInfo.sql" />
+    </changeSet>
+
+
 </databaseChangeLog>
