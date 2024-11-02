@@ -27,5 +27,13 @@
         <sqlFile path="db/changelog/changes/AadharMobileLinkageInfo.sql" />
     </changeSet>
 
+    <changeSet  author="priya" id="7">
+        <sqlFile path="db/changelog/changes/AadharDetailsInfoForOtpValidation.sql" />
+    </changeSet>
+
+    <changeSet  author="priya" id="8">
+        <sqlFile path="db/changelog/changes/InsertCustomerInfo.sql" />
+    </changeSet>
+
 
 </databaseChangeLog>

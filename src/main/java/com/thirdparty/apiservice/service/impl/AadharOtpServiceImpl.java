@@ -1,15 +1,20 @@
 package com.thirdparty.apiservice.service.impl;
 
 import com.google.gson.Gson;
+import static com.thirdparty.apiservice.dto.AadharDataClientDto.*;
+
+import com.thirdparty.apiservice.dto.AadharDataClientDto;
 import com.thirdparty.apiservice.dto.GenerateAadharOtpResponse;
-import com.thirdparty.apiservice.dto.ValidateAadharOtpRequest;
-import com.thirdparty.apiservice.dto.ValidateAadharOtpResponse;
+import com.thirdparty.apiservice.client.request.ValidateAadharOtpRequest;
+import com.thirdparty.apiservice.client.response.ValidateAadharOtpResponse;
 import com.thirdparty.apiservice.entity.AadharOtpEntity;
-import com.thirdparty.apiservice.entity.StubDetails;
+import com.thirdparty.apiservice.entity.CustomerAadharInfoEntity;
 import com.thirdparty.apiservice.helper.EncryptionDecryption;
 import com.thirdparty.apiservice.repository.AadharOtpRepo;
+import com.thirdparty.apiservice.repository.CustomerAadharInfoRepo;
 import com.thirdparty.apiservice.repository.StubDetailsRepo;
 import com.thirdparty.apiservice.service.AadharOtpService;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +24,7 @@ import static com.thirdparty.apiservice.dto.GenerateAadharOtpResponse.GenerateAa
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.UUID;
 
 @Service
 public class AadharOtpServiceImpl implements AadharOtpService {
@@ -31,6 +36,9 @@ public class AadharOtpServiceImpl implements AadharOtpService {
 
     @Autowired
     private EncryptionDecryption encDecHelper;
+
+    @Autowired
+    CustomerAadharInfoRepo customerAadharInfoRepo;
 
     @Override
     public GenerateAadharOtpResponse generateAadharotp(String aadhar) {
@@ -70,31 +78,70 @@ public class AadharOtpServiceImpl implements AadharOtpService {
         AadharOtpEntity entity = aadharOtpRepo.findByTransactionId(request.getValidateAadharOtpReq().getTransactionId());
         ValidateAadharOtpResponse response = new ValidateAadharOtpResponse();
         // difference btwn == ,.equals(),.equalIgnoreCase()
-        if(entity!= null){
+        if (entity != null) {
 
-            if(request.getValidateAadharOtpReq().getAadharOtp().equals(entity.getOtp())&&
-                    request.getValidateAadharOtpReq().getAadharNo().equals(entity.getAadharNo())){
+            if (request.getValidateAadharOtpReq().getAadharOtp().equals(entity.getOtp()) &&
+                    request.getValidateAadharOtpReq().getAadharNo().equals(entity.getAadharNo())) {
 
-              StubDetails stubDetails = stubDetailsRepo.findByStubUrlAndUniqueIdVal("/get/aadhar/details",encDecHelper.encryptAadharData(request.getValidateAadharOtpReq().getAadharNo()));
-              if(stubDetails!=null){
-                  String aadharRes  = stubDetails.getResponse();
-                  response   = gson.fromJson(aadharRes,ValidateAadharOtpResponse.class);
-                  return response;
-              }else {
+//              StubDetails stubDetails = stubDetailsRepo.findByStubUrlAndUniqueIdVal("/get/aadhar/details",encDecHelper.encryptAadharData(request.getValidateAadharOtpReq().getAadharNo()));
+                CustomerAadharInfoEntity aadharInfo = customerAadharInfoRepo.findByAadharNumber(request.getValidateAadharOtpReq().getAadharNo());
+                if (ObjectUtils.isNotEmpty(aadharInfo)) {
+                    String encryptedAadharData = buildAadharData(aadharInfo);
+                    String encryptedAadharNo = encDecHelper.encryptAadharData(aadharInfo.getAadharNumber());
+                    String encryptedAadharName = encDecHelper.encryptAadharData(aadharInfo.getAadharName());
+                    return ValidateAadharOtpResponse.buildValidateAadharOtpResponse("00", encryptedAadharNo, encryptedAadharName, encryptedAadharData);
+                } else {
 
-                  return getErrorResponse("No data added in the database for this customer.. ","DATA-NOT-FOUND","DATA-NOT-FOUND");
-              }
+                    return getErrorResponse("No data added in the database for this customer.. ", "DATA-NOT-FOUND", "DATA-NOT-FOUND");
+                }
+
+            } else {
+
+                return getErrorResponse("Resident authentication failed (usually wrong otp) ", "k-100", "403");
 
             }
-            else {
-
-                return getErrorResponse("Resident authentication failed (usually wrong otp) ","k-100","403");
-
-            }
+        } else {
+            return getErrorResponse("Data can't be processed or Ivalid Request", "IN-REQ", "IN_REQ");
         }
-        else {
-            return getErrorResponse("Data can't be processed or Ivalid Request","IN-REQ","IN_REQ");
-        }
+    }
+
+   String buildAadharData(CustomerAadharInfoEntity aadharInfo) {
+       AadharDataClientDto response = new AadharDataClientDto();
+
+       AadharDataKyc kyc = new AadharDataKyc();
+       kyc.setRet(aadharInfo.getRet());
+       kyc.setCode(UUID.randomUUID().toString());
+       UidDataAadhar uidDataAadhar = new UidDataAadhar();
+       uidDataAadhar.setUid(aadharInfo.getAadharNumber());
+       uidDataAadhar.setEnrolmentDate(aadharInfo.getEnrolmentDate());
+       uidDataAadhar.setPhoto(aadharInfo.getPhoto());
+       UidAadharPdf pdf = new UidAadharPdf();
+       pdf.setContent(aadharInfo.getAadharPdf());
+       uidDataAadhar.setPdf(pdf);
+       UidAadharPoi poi = new UidAadharPoi();
+       poi.setDob(aadharInfo.getDob());
+       poi.setName(aadharInfo.getAadharName());
+       poi.setGender(aadharInfo.getGender());
+       uidDataAadhar.setPoi(poi);
+       UidAadharPoa poa = new UidAadharPoa();
+       poa.setCo(aadharInfo.getCo());
+       poa.setLm(aadharInfo.getLm());
+       poa.setLoc(aadharInfo.getLoc());
+       poa.setDist(aadharInfo.getDist());
+       poa.setPincode(aadharInfo.getPincode());
+       poa.setHouse(aadharInfo.getHouse());
+       poa.setVtc(aadharInfo.getVtc());
+       poa.setStreet(aadharInfo.getStreet());
+       poa.setPostOfc(aadharInfo.getPostOffice());
+       poa.setState(aadharInfo.getState());
+       uidDataAadhar.setPoa(poa);
+       kyc.setUidData(uidDataAadhar);
+       response.setKyc(kyc);
+    Gson gson = new Gson();
+    String jsonString =  gson.toJson(response);
+    String encryptedResponse = encDecHelper.encryptAadharData(jsonString);
+    return encryptedResponse;
+
     }
     private ValidateAadharOtpResponse getErrorResponse(String message, String metadaCd, String resDataCd){
         ValidateAadharOtpResponse response = new ValidateAadharOtpResponse();

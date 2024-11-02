@@ -1,4 +1,4 @@
-package com.thirdparty.apiservice.dto;
+package com.thirdparty.apiservice.client.request;
 
 
 import lombok.Data;

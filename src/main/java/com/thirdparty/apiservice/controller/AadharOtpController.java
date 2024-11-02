@@ -2,9 +2,8 @@ package com.thirdparty.apiservice.controller;
 
 import com.thirdparty.apiservice.dto.GenerateAadharOtpRequest;
 import com.thirdparty.apiservice.dto.GenerateAadharOtpResponse;
-import com.thirdparty.apiservice.dto.ValidateAadharOtpRequest;
-import com.thirdparty.apiservice.dto.ValidateAadharOtpResponse;
-import com.thirdparty.apiservice.entity.AadharOtpEntity;
+import com.thirdparty.apiservice.client.request.ValidateAadharOtpRequest;
+import com.thirdparty.apiservice.client.response.ValidateAadharOtpResponse;
 import com.thirdparty.apiservice.service.AadharOtpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

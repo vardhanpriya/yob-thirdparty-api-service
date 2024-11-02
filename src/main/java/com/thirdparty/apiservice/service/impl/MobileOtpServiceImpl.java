@@ -7,7 +7,6 @@ import static com.thirdparty.apiservice.dto.GenerateMobileOtpResponse.GenerateMo
 
 import com.thirdparty.apiservice.config.PropertyConfig;
 import com.thirdparty.apiservice.dto.GenerateMobileOtpResponse;
-import com.thirdparty.apiservice.dto.ValidateAadharOtpResponse;
 import com.thirdparty.apiservice.dto.ValidateMobileOtpRequest;
 import com.thirdparty.apiservice.dto.ValidateMobileOtpResponse;
 import com.thirdparty.apiservice.entity.MobileOtpEntity;
