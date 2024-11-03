@@ -12,10 +12,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/aadhar-mobile-link/service")
@@ -27,6 +27,12 @@ public class AadharMobileLinkageInfoController {
     @PostMapping(path = "/add-update/details")
     public ResponseEntity<CommonResponse> addAadhaMobileDetailsIndb(@RequestBody AadharMobileLinkageSaveReq req) {
         CommonResponse resp= service.addAadharMobileLinkageIndb(req);
+        return new ResponseEntity<>(resp, HttpStatus.OK);
+    }
+
+    @PostMapping(path = "/bulk/add/details")
+    public ResponseEntity<CommonResponse> bulkaddAadhaMobileDetailsIndb(@RequestParam("file")MultipartFile file) throws IOException {
+        CommonResponse resp= service.bulkaddAadharMobileLinkageIndb(file.getInputStream());
         return new ResponseEntity<>(resp, HttpStatus.OK);
     }
     @PostMapping(path = "/fetch/aadhar-mobile/linkage")

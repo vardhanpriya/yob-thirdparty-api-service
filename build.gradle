@@ -29,8 +29,11 @@ dependencies {
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
 	implementation 'com.google.code.gson:gson:2.11.0'
-
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'org.apache.poi:poi:5.2.3'          // For .xls files
+	implementation 'org.apache.poi:poi-ooxml:5.2.3'    // For .xlsx files
+
+
 }
 
 tasks.named('bootBuildImage') {
