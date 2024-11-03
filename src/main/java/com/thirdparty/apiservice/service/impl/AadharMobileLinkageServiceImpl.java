@@ -3,20 +3,37 @@ package com.thirdparty.apiservice.service.impl;
 import com.thirdparty.apiservice.client.response.AadharMobileLinkageInfoResponse;
 import com.thirdparty.apiservice.client.response.PanAadharLinkageInfoResponse;
 import com.thirdparty.apiservice.dto.AadharMobileLinkageSaveReq;
+import com.thirdparty.apiservice.dto.BulkAddAadharMobileLinkage;
 import com.thirdparty.apiservice.dto.CommonResponse;
 import com.thirdparty.apiservice.entity.AadharMobileLinkageInfoEntity;
 import com.thirdparty.apiservice.entity.PanAadharLinkageInfoEntity;
 import com.thirdparty.apiservice.repository.AadharMobileLinkageInfoRepo;
+import com.thirdparty.apiservice.service.AadharMobileLinkageBatchRepo;
 import com.thirdparty.apiservice.service.AadharMobileLinkageInfoService;
+import com.thirdparty.apiservice.utility.ExcelDataValidationUtility;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.hibernate.sql.Insert;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @Service
 public class AadharMobileLinkageServiceImpl implements AadharMobileLinkageInfoService {
     @Autowired
     private AadharMobileLinkageInfoRepo aadharMobileLinkageInfoRepo;
+
+    @Autowired
+    AadharMobileLinkageBatchRepo aadharMobileLinkageBatchRepo;
+
+
 
     @Override
     public CommonResponse addAadharMobileLinkageIndb(AadharMobileLinkageSaveReq req) {
@@ -68,5 +85,45 @@ public class AadharMobileLinkageServiceImpl implements AadharMobileLinkageInfoSe
 
             }
         }
+    }
+
+    @Override
+    public CommonResponse bulkaddAadharMobileLinkageIndb(InputStream inputStream) throws IOException {
+        List<BulkAddAadharMobileLinkage> listOfData = buildAadharMobileList(inputStream);
+        try {
+            aadharMobileLinkageBatchRepo.addAadharMobileLinkage(listOfData);
+            return CommonResponse.buildCommonResponse("SUCCESS","added successfully","00");
+        }catch (Exception e){
+            return CommonResponse.buildCommonResponse("ERROR","Exception found","01");
+        }
+
+    }
+
+    List<BulkAddAadharMobileLinkage>  buildAadharMobileList(InputStream inputStream) throws IOException {
+        List<BulkAddAadharMobileLinkage> request = new ArrayList<>();
+
+        XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
+        XSSFSheet sheet = workbook.getSheet("Sheet1");
+        int rowNumber = 0;
+        Iterator<Row> iterator = sheet.iterator();
+        while(iterator.hasNext()){
+            Row row = iterator.next();
+            if(rowNumber==0){
+                rowNumber++;
+                continue;
+            }
+            BulkAddAadharMobileLinkage obj = createReqObj(row);
+            request.add(obj);
+        }
+        return request;
+
+    }
+
+    private BulkAddAadharMobileLinkage createReqObj( Row row){
+        BulkAddAadharMobileLinkage req = new BulkAddAadharMobileLinkage();
+        req.setAadharNo(ExcelDataValidationUtility.cellTypeConverter(row.getCell(0)));
+        req.setMobileNo(ExcelDataValidationUtility.cellTypeConverter(row.getCell(1)));
+        req.setLinkedValue(ExcelDataValidationUtility.cellTypeConverter(row.getCell(2)));
+        return req;
     }
 }

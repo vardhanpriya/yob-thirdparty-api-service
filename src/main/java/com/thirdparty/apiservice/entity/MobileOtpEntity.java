@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class MobileOtpEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     private Integer id;
 

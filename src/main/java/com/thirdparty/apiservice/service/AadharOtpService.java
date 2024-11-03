@@ -1,8 +1,8 @@
 package com.thirdparty.apiservice.service;
 
 import com.thirdparty.apiservice.dto.GenerateAadharOtpResponse;
-import com.thirdparty.apiservice.dto.ValidateAadharOtpRequest;
-import com.thirdparty.apiservice.dto.ValidateAadharOtpResponse;
+import com.thirdparty.apiservice.client.request.ValidateAadharOtpRequest;
+import com.thirdparty.apiservice.client.response.ValidateAadharOtpResponse;
 
 public interface AadharOtpService {
    //we  only write method declaration in interface
