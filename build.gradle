@@ -32,6 +32,7 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'org.apache.poi:poi:5.2.3'          // For .xls files
 	implementation 'org.apache.poi:poi-ooxml:5.2.3'    // For .xlsx files
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
 
 
 }

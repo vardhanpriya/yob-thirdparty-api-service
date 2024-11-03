@@ -12,7 +12,7 @@ public class ExcelDataValidationUtility {
         try {
             CellType type = cell.getCellType();
             if(type == CellType.NUMERIC){
-                value = String.valueOf(Integer.valueOf(int) cell.getNumericCellValue());
+                value = String.valueOf(Integer.valueOf((int) cell.getNumericCellValue()));
             } else if (cell == null) {
                 value = null;
 
