@@ -35,5 +35,9 @@
         <sqlFile path="db/changelog/changes/InsertCustomerInfo.sql" />
     </changeSet>
 
+    <changeSet  author="priya" id="9">
+        <sqlFile path="db/changelog/changes/Posidex_Table_Customer_Details.sql" />
+    </changeSet>
+
 
 </databaseChangeLog>

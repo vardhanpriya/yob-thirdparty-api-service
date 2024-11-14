@@ -34,8 +34,28 @@ dependencies {
 	implementation 'org.apache.poi:poi-ooxml:5.2.3'    // For .xlsx files
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
 
+	implementation 'io.opentelemetry:opentelemetry-sdk:1.34.0'
+// https://mvnrepository.com/artifact/io.opentelemetry/opentelemetry-exporter-otlp
+	implementation 'io.opentelemetry:opentelemetry-exporter-otlp:1.43.0'
+// https://mvnrepository.com/artifact/io.opentelemetry/opentelemetry-sdk-logs
+	implementation 'io.opentelemetry:opentelemetry-sdk-logs:1.34.1'
+
+	implementation 'io.opentelemetry:opentelemetry-api:1.34.0'
+	implementation 'io.opentelemetry:opentelemetry-exporter-jaeger:1.34.1' // Downgraded
+	implementation 'io.opentelemetry:opentelemetry-sdk-trace:1.34.0'
+	implementation 'io.opentelemetry:opentelemetry-exporter-logging:1.34.0'
+//	implementation 'io.opentelemetry.instrumentation:opentelemetry-spring-boot-autoconfigure:2.8.0' // Downgraded to match the API version
+//	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
+
+
+
 
 }
+
+tasks.named('bootJar') {
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
 
 tasks.named('bootBuildImage') {
 	builder = 'paketobuildpacks/builder-jammy-base:latest'

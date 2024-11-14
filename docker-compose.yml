@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  yob-thirdparty-api-service:
+    container_name: yob-thirdparty-api
+    build:
+      context: D:/YOB-BANKING-PROJECT/YOB-APPLICATION/yob-thirdparty-api-service
+      dockerfile: Dockerfile
+    environment:
+      - JAVA_TOOL_OPTIONS=-javaagent:/app/opentelemetry-javaagent.jar
+      - OTEL_SERVICE_NAME=yob-thirdparty-api
+      - OTEL_METRICS_EXPORTER=none
+      - OTEL_TRACES_EXPORTER=jaeger
+      - OTEL_EXPORTER_JAEGER_ENDPOINT=http://jaeger:14250
+      - SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/yob_third_party_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=Kirti@1304
+    ports:
+      - "9095:9095"
+
+
+  jaeger:
+    container_name: jaeger
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "16686:16686"
+      - "14250:14250"
