@@ -20,6 +20,11 @@ configurations {
 repositories {
 	mavenCentral()
 }
+dependencyManagement {
+	imports {
+		mavenBom("io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom:2.6.0")
+	}
+}
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -34,19 +39,28 @@ dependencies {
 	implementation 'org.apache.poi:poi-ooxml:5.2.3'    // For .xlsx files
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
 
-	implementation 'io.opentelemetry:opentelemetry-sdk:1.34.0'
-// https://mvnrepository.com/artifact/io.opentelemetry/opentelemetry-exporter-otlp
-	implementation 'io.opentelemetry:opentelemetry-exporter-otlp:1.43.0'
-// https://mvnrepository.com/artifact/io.opentelemetry/opentelemetry-sdk-logs
-	implementation 'io.opentelemetry:opentelemetry-sdk-logs:1.34.1'
+	// OpenTelemetry Spring Boot starter
+	implementation("io.opentelemetry.instrumentation:opentelemetry-spring-boot-starter")
+	implementation 'io.opentelemetry:opentelemetry-sdk'
+	implementation 'io.opentelemetry:opentelemetry-sdk-logs'
+	implementation 'io.opentelemetry:opentelemetry-sdk-trace'
+	implementation 'io.opentelemetry:opentelemetry-api'
+	implementation 'io.opentelemetry:opentelemetry-exporter-jaeger'
+	implementation 'io.opentelemetry:opentelemetry-exporter-otlp'
+	implementation 'io.opentelemetry:opentelemetry-sdk-extension-autoconfigure'
 
-	implementation 'io.opentelemetry:opentelemetry-api:1.34.0'
-	implementation 'io.opentelemetry:opentelemetry-exporter-jaeger:1.34.1' // Downgraded
-	implementation 'io.opentelemetry:opentelemetry-sdk-trace:1.34.0'
-	implementation 'io.opentelemetry:opentelemetry-exporter-logging:1.34.0'
-//	implementation 'io.opentelemetry.instrumentation:opentelemetry-spring-boot-autoconfigure:2.8.0' // Downgraded to match the API version
-//	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
+	implementation('io.opentelemetry.instrumentation:opentelemetry-spring-boot-starter') {
+		exclude group: 'io.opentelemetry', module: 'opentelemetry-exporter-jaeger'
+	}
+	// Add the correct version of exporter here
+	implementation 'io.opentelemetry:opentelemetry-exporter-jaeger:1.34.1'
 
+
+	// zipkins dependency
+	implementation 'org.springframework.boot:spring-boot-starter-logging'
+	implementation 'org.springframework.cloud:spring-cloud-starter-sleuth:3.1.11'
+	implementation 'org.springframework.cloud:spring-cloud-starter-zipkin:2.2.8.RELEASE'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator:3.3.3'
 
 
 
